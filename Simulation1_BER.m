@@ -1,6 +1,6 @@
 clear all;close all;clc
 
-numIter = 100; %100;
+numIter = 10; %100;
 nSym = 1000;
 SNR_Vec = 0:2:16;
 lenSNR = length(SNR_Vec);
@@ -15,8 +15,7 @@ berVec = zeros(numIter, lenSNR);
 
 for i = 1:numIter
     
-    bits = randi([0 log2(M)],1,nSym*log2(M));
-    msg = bits;
+    msg = randi([0 log2(M*2)-1], 1, nSym*log2(M));
     
     for j = 1:lenSNR
         tx = qammod(msg,M);
@@ -31,7 +30,6 @@ for i = 1:numIter
         end
         
         txNoisy = awgn(txChan, SNR_Vec(j), 'measured');
-        
         %add equalization
         
         rx = qamdemod(txNoisy, M);
@@ -48,7 +46,14 @@ semilogy(SNR_Vec, ber)
 
 %computer theoretical BER
 
-berTheory = berawgn(SNR_Vec, 'QAM', 4);
+%Note: EbNO = SNR - 10log10(bits per symbol) + 10log10(samples per symbol)
+%From the matlab website
+
+berTheory = berawgn(SNR_Vec - 10*log10(log2(M)), 'qam', M);
+
 hold on
-semilogy(SNR_Vec+3, berTheory, 'r');
+semilogy(SNR_Vec, berTheory, 'r');
 legend('BER', 'Theoretical BER')
+xlabel('SNR')
+ylabel('BER')
+title(append(num2str(M),'-QAM'))
