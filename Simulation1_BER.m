@@ -4,7 +4,7 @@ numIter = 100; %100;
 nSym = 1000;
 SNR_Vec = 0:2:16;
 lenSNR = length(SNR_Vec);
-numTrainingSymbols = 80;
+numTrainingSymbols = 500;
 
 M = 2;
 
