@@ -5,7 +5,7 @@ nSym = 1000;
 SNR_Vec = 0:2:16;
 lenSNR = length(SNR_Vec);
 
-M = 4;
+M = 256;
 
 chan = 1;
 %chan = [1 .2 .4]; %Moderate ISI
@@ -15,7 +15,7 @@ berVec = zeros(numIter, lenSNR);
 
 for i = 1:numIter
     
-    msg = randi([0 log2(M*2)-1], 1, nSym*log2(M));
+    msg = randi([0 M-1], 1, nSym);
     
     for j = 1:lenSNR
         tx = qammod(msg,M);
