@@ -5,6 +5,8 @@ EbNo = 0:2:30;      % Eb/No varying to 30 dB
 N = 2;              % maximum number of Tx antennas
 M = 4;              % maximum number of Rx antennas
 
+P = 2;
+
 bpskMod     = comm.BPSKModulator;
 bpskDemod   = comm.BPSKDemodulator('OutputDataType','double');
 
@@ -13,12 +15,6 @@ ostbcEnc    = comm.OSTBCEncoder;
 ostbcComb   = comm.OSTBCCombiner;
 ostbcComb_2 = comm.OSTBCCombiner('NumReceiveAntennas',2);
 
-% Create two comm.AWGNChannel System objects for one and two receive
-% antennas respectively. Set the NoiseMethod property of the channel to
-% 'Signal to noise ratio (Eb/No)' to specify the noise level using the
-% energy per bit to noise power spectral density ratio (Eb/No). The output
-% of the BPSK modulator generates unit power signals; set the SignalPower
-% property to 1 Watt.
 awgn1Rx = comm.AWGNChannel(...
     'NoiseMethod', 'Signal to noise ratio (Eb/No)', ...
     'SignalPower', 1);
@@ -72,11 +68,10 @@ for idx = 1:length(EbNo)
     reset(errorCalc4);
     reset(errorCalc5);
 
-    % Set the EbNo property of the AWGNChannel System objects
     awgn1Rx.EbNo = EbNo(idx); 
     awgn2Rx.EbNo = EbNo(idx);
     awgn4Rx.EbNo = EbNo(idx);
-    % Loop over the number of packets
+    
     for packetIdx = 1:numPackets
         % Generate data vector per frame 
         data = randi([0 P-1], frmLen, 1); 
